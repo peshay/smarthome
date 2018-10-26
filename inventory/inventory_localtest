@@ -1,0 +1,2 @@
+[storage]
+localhost   ansible_port=2222   ansible_user=peshay
