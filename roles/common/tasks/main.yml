@@ -1,0 +1,16 @@
+---
+# tasks file for common
+- name: Add my ssh key
+  authorized_key:
+    user: "{{ ansible_user }}"
+    key: "{{ item }}"
+  with_file:
+    - "{{ ssh_pubkey_ed }}"
+
+- name: Allow user to have passwordless sudo
+  copy:
+    dest: "/etc/sudoers.d/{{ ansible_user }}"
+    content: '{{ ansible_user }} ALL=(ALL) NOPASSWD: ALL'
+
+- name: pkgs Solaris
+  include: "pkgs/{{ ansible_distribution }}.yml"

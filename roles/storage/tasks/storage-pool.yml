@@ -1,0 +1,40 @@
+- name: storage-pool | Export data pool
+  command: zpool export data
+  when: stuff_mount.stdout == "no"
+
+- name: storage-pool | Check for zpool stick
+  shell: "zpool destroy stick;:"
+
+- name: storage-pool | Check for ramdisk
+  command: ramdiskadm
+  register: ramdiskadm
+  check_mode: no
+
+- name: storage-pool | Create ramdisk
+  command: ramdiskadm -a stick 64m
+  when:  ramdiskadm is not skipped and ramdiskadm.stdout.find("/dev/ramdisk/stick") < 1
+
+- name: storage-pool | Create Temporary passphrasefile
+  shell: echo "{{ lookup('password', '/dev/null chars=ascii_letters,digits,hexdigits,punctuation') }}" > /tmp/passwordfile
+
+- name: storage-pool | Create Encrypted zpool on ramdisk
+  command: zpool create -O encryption=on -O keysource=passphrase,file:///tmp/passwordfile stick /dev/ramdisk/stick
+
+- name: storage-pool | Copy Keyfile to Encrypted zpool stick
+  copy:
+    src: /Volumes/Image/my.key
+    dest: /stick/my.key
+    owner: root
+    group: root
+    mode: 0400
+
+- name: storage-pool | Reimport data pool
+  command: zpool import data
+
+- name: storage-pool | Mount Encrypted data/stuff from pool
+  command: mount -F zfs data/stuff /data/stuff
+  args:
+    warn: no
+
+- name: storage-pool | Remove ramdisk
+  shell: zpool destroy stick && ramdiskadm -d stick

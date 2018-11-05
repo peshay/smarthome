@@ -1,0 +1,27 @@
+- name: storage | Install Storage PKGs
+  pkg5:
+      name: service/file-system/nfs
+      state: latest # Whether to install (I(present), I(latest)), or remove (I(absent)) a package.
+  when: ansible_distribution == 'Solaris'
+
+- name: storage | Is storage mounted already?
+  command: zfs get -H -o value mounted data/stuff
+  register: stuff_mount
+  ignore_errors: True
+  check_mode: no
+  tags: remount
+
+- name: storage | Re-Mount
+  include: storage-pool.yml
+  when: stuff_mount is failed or stuff_mount.stdout == "no"
+  tags: remount
+
+- name: storage | Share data ZFS via NFS
+  zfs:
+      name: "{{ item }}"
+      state: present
+      extra_zfs_properties:
+          sharenfs: on
+  loop:
+    - data
+    - data/stuff

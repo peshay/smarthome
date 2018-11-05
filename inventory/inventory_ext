@@ -1,0 +1,6 @@
+[storage]
+ahustor-ext  ansible_ssh_host=ahustor-ext ansible_user=peshay
+[webshare]
+ahustor-ext  ansible_ssh_host=ahustor-ext ansible_user=peshay
+[pi]
+192.168.178.27  ansible_user=pi

@@ -1,0 +1,12 @@
+---
+- name: Install standard PKGs
+  pkg5:
+      name: "{{ pkgs }}"
+      state: latest # Whether to install (I(present), I(latest)), or remove (I(absent)) a package.
+  vars:
+    pkgs:
+      - sudo
+      - pkg:/system/locale
+      - text/doctools
+      - service/file-system/nfs
+      - pkg:/text/gnu-grep

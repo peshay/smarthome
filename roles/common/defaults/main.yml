@@ -1,0 +1,3 @@
+---
+# defaults file for common
+ssh_pubkey_ed: /Users/ahu/.ssh/id_ed25519.pub

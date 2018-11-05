@@ -1,0 +1,6 @@
+[storage]
+ahustor  ansible_user=peshay
+[webshare]
+ahustor  ansible_user=peshay
+[pi]
+192.168.178.27  ansible_user=pi
