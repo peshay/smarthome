@@ -1,0 +1,6 @@
+---
+# vars file for webshare
+webmaster_email: "anhubert@gmail.com"
+vhost_domain: "peshay.dynv6.net"
+web_access_user: "ahuflix"
+web_share_dir: "/data/stuff"

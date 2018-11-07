@@ -1,0 +1,13 @@
+   ServerName {{ vhost_domain }}
+	DocumentRoot "{{ web_share_dir }}"
+    <Directory "{{ web_share_dir }}">
+        AuthType Basic
+        AuthName "Restricted Content"
+        AuthUserFile "{{ htpass_file }}"
+        Require user "{{ web_access_user }}"
+        Options +Indexes
+    </Directory>
+
+    LogLevel warn
+    ErrorLog {{ vhost_directory }}/logs/error.log
+    CustomLog {{ vhost_directory }}/logs/access.log combined

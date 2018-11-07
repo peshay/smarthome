@@ -1,0 +1,7 @@
+        ServerName {{ vhost_domain }}
+
+    	DocumentRoot "{{ vhost_directory }}/acme"
+        <Directory "{{ vhost_directory }}/acme">
+            AllowOverride None
+            Require all granted
+        </Directory>

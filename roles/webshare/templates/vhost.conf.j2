@@ -1,0 +1,15 @@
+<VirtualHost *:80>
+{% include "acme_challenge_alias.j2" %}
+
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+Listen 443
+<VirtualHost *:443>
+{% include "basic_conf_include.j2" %}
+
+    SSLEngine on
+    SSLCertificateFile "{{ vhost_ssl_certificate }}"
+    SSLCertificateKeyFile "{{ vhost_ssl_key }}"
+</VirtualHost>
+</IfModule>

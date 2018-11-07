@@ -1,0 +1,96 @@
+---
+- name: Install Apache2
+  pkg5:
+      name: "apache-24,pkg:/library/python/passlib"
+      state: latest # Whether to install (I(present), I(latest)), or remove (I(absent)) a package.
+      accept_licenses: yes # Accept any licences.
+
+- name: Install PIP module passlib
+  pip:
+      name: passlib
+      state: present
+
+- name: Load private data
+  include_vars: "/Volumes/Image/private_key.yml"
+
+- name: Apache configuration
+  template: src=vhost.conf.j2 dest="{{ apache_etc }}/conf.d/{{ vhost_domain }}.conf" owner=root group=webservd mode=0644
+
+- name: Create SSL directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  with_items:
+      - { path: "{{ cert_path }}", mode: "0755", owner: "root", group: "root" }
+      - { path: "{{ key_path }}", mode: "0750", owner: "root", group: "webservd" }
+      - { path: "{{ vhost_directory }}", mode: "0755", owner: "webservd", group: "webservd" }
+      - { path: "{{ vhost_directory }}/htdocs", mode: "0770", owner: "webservd", group: "webservd" }
+      - { path: "{{ vhost_directory }}/logs", mode: "0770", owner: "root", group: "webservd" }
+      - { path: "{{ vhost_directory }}/tmp", mode: "0770", owner: "webservd", group: "webservd" }
+      - { path: "{{ vhost_directory }}/acme/.well-known/acme-challenge", mode: '0755', owner: 'webservd', group: 'webservd' }
+
+- name: Reload Apache
+  service: name=apache24 state=reloaded
+
+- name: Create private key
+  openssl_privatekey:
+      path: "{{ vhost_ssl_key }}"
+      type: RSA # The algorithm used to generate the TLS/SSL private key
+      state: present # Whether the private key should exist or not, taking action if the state is different from what is stated.
+
+- name: Create CSR
+  openssl_csr:
+      privatekey_path: "{{ vhost_ssl_key }}"
+      path: "{{ vhost_ssl_csr }}"
+      state: present # Whether the certificate signing request should exist or not, taking action if the state is different from what is stated.
+      country_name: "{{ country }}"
+      state_or_province_name: "{{ state }}"
+      locality_name: "{{ city }}"
+      common_name: "{{ vhost_domain }}"
+      email_address: "{{ webmaster_email }}"
+
+- name: Create a challenge for {{ vhost_domain }} using a account key from a variable.
+  acme_certificate:
+    account_key_content: "{{ ssl_private_key }}"
+    csr: "{{ vhost_ssl_csr }}"
+    dest: "{{ vhost_ssl_certificate }}"
+    acme_directory: https://acme-v01.api.letsencrypt.org/directory
+  register: peshay_dynv6_net_challenge
+  tags: renew_cert
+
+- name: Copy challenge response
+  copy:
+    dest: "{{ vhost_directory }}/acme/{{ peshay_dynv6_net_challenge['challenge_data'][vhost_domain]['http-01']['resource'] }}"
+    content: "{{ peshay_dynv6_net_challenge['challenge_data'][vhost_domain]['http-01']['resource_value'] }}"
+    owner: webservd
+    group: webservd
+  when: peshay_dynv6_net_challenge is changed
+  tags: renew_cert
+
+- name: Let the challenge be validated and retrieve the cert and intermediate certificate
+  acme_certificate:
+    account_key_content: "{{ ssl_private_key }}"
+    csr: "{{ vhost_ssl_csr }}"
+    fullchain_dest: "{{ vhost_ssl_certificate }}"
+    data: "{{ peshay_dynv6_net_challenge }}"
+    acme_directory: https://acme-v01.api.letsencrypt.org/directory
+  notify: Reload Apache
+  tags: renew_cert
+
+- name: Create authentication for Apache
+  htpasswd:
+      path: "{{ htpass_file }}"
+      name: "{{ web_access_user }}"
+      password: "{{ ahuflix_password }}"
+
+- name: Activate SSL config
+  lineinfile:
+    path: /etc/apache2/2.4/httpd.conf
+    regexp: '^LoadModule ssl_module libexec/mod_ssl.so$'
+    insertafter: '^#LoadModule ssl_module '
+    line: 'LoadModule ssl_module libexec/mod_ssl.so'
+    state: present
+  notify: Reload Apache

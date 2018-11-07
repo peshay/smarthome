@@ -1,0 +1,6 @@
+---
+# handlers file for webshare
+- name: Reload Apache
+  service:
+      name: apache24
+      state: reloaded

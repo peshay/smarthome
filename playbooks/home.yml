@@ -4,3 +4,4 @@
   roles:
       - common
       - { role: storage, when: ansible_distribution == "Solaris" }
+      - { role: webshare, when: ansible_distribution == "Solaris" }
