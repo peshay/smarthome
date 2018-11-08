@@ -3,5 +3,5 @@
   become: yes
   roles:
       - common
-      - { role: storage, when: ansible_distribution == "Solaris" }
-      - { role: webshare, when: ansible_distribution == "Solaris" }
+      - { role: storage, when: ansible_distribution == "Solaris", tags: storage }
+      - { role: webshare, when: ansible_distribution == "Solaris", tags: webshare }

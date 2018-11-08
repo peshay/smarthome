@@ -16,6 +16,7 @@
 
 - name: Apache configuration
   template: src=vhost.conf.j2 dest="{{ apache_etc }}/conf.d/{{ vhost_domain }}.conf" owner=root group=webservd mode=0644
+  tags: webdav
 
 - name: Create SSL directories
   file:
@@ -89,9 +90,30 @@
 
 - name: Activate SSL config
   lineinfile:
-    path: /etc/apache2/2.4/httpd.conf
+    path: "{{ httpd_conf }}"
     regexp: '^LoadModule ssl_module libexec/mod_ssl.so$'
     insertafter: '^#LoadModule ssl_module '
     line: 'LoadModule ssl_module libexec/mod_ssl.so'
     state: present
   notify: Reload Apache
+
+- name: Add WebDAV lock
+  lineinfile:
+    path: "{{ httpd_conf }}"
+    line: 'DavLockDB {{ apache_var }}/DavLock'
+    state: present
+  notify: Reload Apache
+  tags: webdav
+
+- name: Activate Apache Modules
+  lineinfile:
+    path: "{{ httpd_conf }}"
+    regexp: '^{{ item }}$'
+    insertafter: '^#{{ item }}'
+    line: '{{ item }}'
+    state: present
+  loop:
+      - "LoadModule dav_module libexec/mod_dav.so"
+      - "LoadModule dav_fs_module libexec/mod_dav_fs.so"
+  notify: Reload Apache
+  tags: webdav

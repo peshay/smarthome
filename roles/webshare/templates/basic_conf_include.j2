@@ -5,7 +5,12 @@
         AuthName "Restricted Content"
         AuthUserFile "{{ htpass_file }}"
         Require user "{{ web_access_user }}"
-        Options +Indexes
+        <IfModule mod_dav.c>
+        <IfModule mod_dav_fs.c>
+            DAV on
+        </IfModule>
+        </IfModule>
+        Options Indexes FollowSymLinks MultiViews
     </Directory>
 
     LogLevel warn
