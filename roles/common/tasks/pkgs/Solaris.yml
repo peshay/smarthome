@@ -10,3 +10,5 @@
       - text/doctools
       - service/file-system/nfs
       - pkg:/text/gnu-grep
+      - ntp
+  tags: update  

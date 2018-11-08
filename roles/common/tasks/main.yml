@@ -14,4 +14,20 @@
 
 - name: pkgs Solaris
   include: "pkgs/{{ ansible_distribution }}.yml"
-  tags: update
+
+- name: configure NTP
+  copy:
+      dest: /etc/inet/ntp.conf
+      content: |
+        server 0.de.pool.ntp.org
+        server 1.de.pool.ntp.org
+        server 2.de.pool.ntp.org
+        server 3.de.pool.ntp.org
+        broadcastclient
+        disable auth
+        driftfile /var/ntp/ntp.drift
+        filegen loopstats file loopstats type day enable
+        filegen peerstats file peerstats type day enable
+        statsdir /var/ntp/ntpstats/
+  notify: Reload NTP
+  tags: NTP
