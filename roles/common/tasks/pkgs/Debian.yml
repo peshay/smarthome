@@ -1,0 +1,15 @@
+---
+- name: Install standard PKGs
+  apt:
+      name: "{{ pkgs }}"
+      state: latest # Indicates the desired package state. C(latest) ensures that the latest version is installed. C(build-dep) ensures the package build dependencies are installed.
+      autoremove: yes # If C(yes), remove unused dependency packages for all module states except I(build-dep). It can also be used as the only option.,Previous to version 2.4, autoclean was also an alias for autoremove, now it is its own separate command. See documentation for further information.
+  vars:
+    pkgs:
+      - sudo
+      - locale
+      - grep
+      - man-db
+      - nfs-common
+      - ntp
+  tags: update
