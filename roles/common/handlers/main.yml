@@ -1,0 +1,7 @@
+---
+# handlers file for webshare
+- name: Reload NTP
+  service:
+      name: ntp
+      state: reloaded
+  tags: NTP
