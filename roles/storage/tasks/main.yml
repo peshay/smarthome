@@ -3,6 +3,7 @@
       name: service/file-system/nfs
       state: latest # Whether to install (I(present), I(latest)), or remove (I(absent)) a package.
   when: ansible_distribution == 'Solaris'
+  tags: update
 
 - name: storage | Is storage mounted already?
   command: zfs get -H -o value mounted data/stuff

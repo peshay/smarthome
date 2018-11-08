@@ -4,6 +4,7 @@
       name: "apache-24,pkg:/library/python/passlib"
       state: latest # Whether to install (I(present), I(latest)), or remove (I(absent)) a package.
       accept_licenses: yes # Accept any licences.
+  tags: update
 
 - name: Install PIP module passlib
   pip:
