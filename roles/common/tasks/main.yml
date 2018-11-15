@@ -1,11 +1,34 @@
 ---
 # tasks file for common
+- name: gather os specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "../defaults/{{ ansible_distribution }}-{{ ansible_distribution_major_version}}.yml"
+    - "../defaults/{{ ansible_distribution }}.yml"
+  tags: vars
+
+- name: set hostname
+  hostname:
+      name: "{{ ansible_host }}"
+  notify: reboot
+
 - name: Add my ssh key
   authorized_key:
     user: "{{ ansible_user }}"
     key: "{{ item }}"
+    exclusive: yes
   with_file:
     - "{{ ssh_pubkey_ed }}"
+
+- name: Load private data
+  include_vars: "/Volumes/Image/private_key.yml"
+
+- name: Set default admin password
+  user:
+      name: "{{ ansible_user }}"
+      password: "{{ admin_hash }}"
+      state: present
+      update_password: always # C(always) will update passwords if they differ.  C(on_create) will only set the password for newly created users.
 
 - name: Allow user to have passwordless sudo
   copy:
@@ -15,9 +38,14 @@
 - name: Install base packages
   include: "pkgs/{{ ansible_distribution }}.yml"
 
+- name: Set timezone
+  timezone:
+      name: "{{ timezone }}"
+  when: ansible_distribution != "Solaris"
+
 - name: configure NTP
   copy:
-      dest: /etc/inet/ntp.conf
+      dest: "{{ ntp_conf }}"
       content: |
         server 0.de.pool.ntp.org
         server 1.de.pool.ntp.org
@@ -25,9 +53,9 @@
         server 3.de.pool.ntp.org
         broadcastclient
         disable auth
-        driftfile /var/ntp/ntp.drift
+        driftfile {{ ntp_driftfile }}
         filegen loopstats file loopstats type day enable
         filegen peerstats file peerstats type day enable
-        statsdir /var/ntp/ntpstats/
-  notify: Reload NTP
+        statsdir {{ ntp_statsdir }}
+  notify: "Reload NTP {{ ansible_distribution }}"
   tags: NTP

@@ -16,15 +16,22 @@ $ pkg exact-install --be-name 11.4.0min entire@11.4-11.4.0 solaris-minimal-serve
 Base OS: [Raspbian](https://www.raspberrypi.org/downloads/raspbian/ "Raspbian Download Page")
 
 ### (upcoming) Pi Cluster
-Base OS: [Hypriot OS](https://blog.hypriot.com/downloads/ "Hypriot OS Download Page")
-#### Flash latest Hypriot OS to SD card
+Base OS: [Raspbian](https://www.raspberrypi.org/downloads/raspbian/ "Raspbian Download Page")
+#### Flash latest Raspbian to SD card
+To use following code, this should have been installed
+```bash
+brew install pv jq
+```
 ```bash
 hypriot_flash_latest=$(curl -s https://api.github.com/repos/hypriot/flash/releases/latest | jq -r ".assets[0].browser_download_url")
-hypriot_os_url_latest=$(curl -s https://api.github.com/repos/hypriot/image-builder-rpi/releases/latest | jq -r ".assets[0].browser_download_url")
 curl -LO $hypriot_flash_latest
 chmod +x flash
-./flash $hypriot_os_url_latest
+./flash --hostname node01 https://downloads.raspberrypi.org/raspbian_lite_latest
 rm flash
+```
+remount SD card and activate SSH
+```bash
+touch /Volumes/boot/ssh
 ```
 
 ## Standard Tasks

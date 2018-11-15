@@ -1,6 +1,16 @@
 [storage]
-ahustor-ext  ansible_ssh_host=ahustor-ext ansible_user=peshay
+ahustor         ansible_user=peshay     ansible_ssh_host=ahustor
 [webshare]
-ahustor-ext  ansible_ssh_host=ahustor-ext ansible_user=peshay
-[pi]
-192.168.178.27  ansible_user=pi
+ahustor         ansible_user=peshay     ansible_ssh_host=ahustor
+
+[homecenter]
+homecenter      ansible_user=pi         ansible_ssh_host=homecenter
+
+[master]
+node01          ansible_user=pi         ansible_ssh_host=node01
+[node]
+node02          ansible_user=pi         ansible_ssh_host=node02
+
+[kube-cluster:children]
+master
+node

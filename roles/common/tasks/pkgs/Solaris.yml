@@ -11,4 +11,10 @@
       - service/file-system/nfs
       - pkg:/text/gnu-grep
       - ntp
-  tags: update  
+      - mdns
+  tags: update
+
+- name: activate mDNS
+  service:
+      name: dns/multicast
+      state: started

@@ -1,0 +1,4 @@
+---
+ntp_conf: /etc/ntp.conf
+ntp_driftfile: /var/lib/ntp/ntp.drift
+ntp_statsdir: /var/log/ntpstats/

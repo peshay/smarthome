@@ -1,7 +1,16 @@
 ---
 # handlers file for webshare
-- name: Reload NTP
+- name: Reload NTP Solaris
   service:
       name: ntp
       state: reloaded
   tags: NTP
+
+- name: Reload NTP Debian
+  systemd:
+      name: ntp
+      state: restarted
+  tags: NTP
+
+- name: reboot
+  reboot:
