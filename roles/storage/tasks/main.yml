@@ -11,6 +11,7 @@
   ignore_errors: True
   check_mode: no
   tags: remount
+  changed_when: False
 
 - name: storage | Re-Mount
   include: storage-pool.yml

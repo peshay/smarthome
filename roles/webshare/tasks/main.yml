@@ -17,6 +17,7 @@
 - name: Apache configuration
   template: src=vhost.conf.j2 dest="{{ apache_etc }}/conf.d/{{ vhost_domain }}.conf" owner=root group=webservd mode=0644
   tags: webdav
+  register: apache_config
 
 - name: Create SSL directories
   file:
@@ -36,6 +37,7 @@
 
 - name: Reload Apache
   service: name=apache24 state=reloaded
+  when: apache_config is changed
 
 - name: Create private key
   openssl_privatekey:
