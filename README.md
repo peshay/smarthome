@@ -26,7 +26,7 @@ brew install pv jq
 hypriot_flash_latest=$(curl -s https://api.github.com/repos/hypriot/flash/releases/latest | jq -r ".assets[0].browser_download_url")
 curl -LO $hypriot_flash_latest
 chmod +x flash
-./flash --hostname node01 https://downloads.raspberrypi.org/raspbian_lite_latest
+./flash https://downloads.raspberrypi.org/raspbian_lite_latest
 rm flash
 ```
 remount SD card and activate SSH
