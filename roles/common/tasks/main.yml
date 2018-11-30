@@ -38,6 +38,11 @@
 - name: Install base packages
   include: "pkgs/{{ ansible_distribution }}.yml"
 
+- name: Ensure a locale exists
+  locale_gen:
+    name: en_US.UTF-8
+  when: ansible_distribution != "Solaris"
+
 - name: Set timezone
   timezone:
       name: "{{ timezone }}"
