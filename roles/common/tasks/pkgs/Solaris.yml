@@ -12,6 +12,7 @@
       - pkg:/text/gnu-grep
       - ntp
       - mdns
+      - rsync
   tags: update
 
 - name: activate mDNS
