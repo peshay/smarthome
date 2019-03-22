@@ -13,6 +13,8 @@
       - ntp
       - mdns
       - rsync
+      - unrar
+      - screen
   tags: update
 
 - name: activate mDNS
