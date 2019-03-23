@@ -10,23 +10,3 @@
   become: yes
   roles:
       - common
-
-- hosts: kube-cluster
-  gather_facts: yes
-  become: yes
-  roles:
-    - common
-    - { role: kubernetes/docker, tags: docker }
-
-- hosts: master
-  gather_facts: yes
-  become: yes
-  roles:
-    - { role: kubernetes/master, tags: master }
-    - { role: kubernetes/cni, tags: cni }
-
-- hosts: node
-  gather_facts: yes
-  become: yes
-  roles:
-    - { role: kubernetes/node, tags: node }
