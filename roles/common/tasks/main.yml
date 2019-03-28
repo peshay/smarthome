@@ -9,7 +9,7 @@
 
 - name: set hostname
   hostname:
-      name: "{{ ansible_host }}"
+      name: "{{ ansible_nodename }}"
   notify: reboot
 
 - name: Add my ssh key

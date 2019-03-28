@@ -7,9 +7,9 @@ ahustor         ansible_user=peshay     ansible_ssh_host=ahustor.local
 homecenter      ansible_user=pi         ansible_ssh_host=homecenter.local
 
 [master]
-node01          ansible_user=pi         ansible_ssh_host=node01.local
+node01          ansible_user=pi         ansible_ssh_host=192.168.178.52
 [node]
-node02          ansible_user=pi         ansible_ssh_host=node02.local
+node02          ansible_user=pi         ansible_ssh_host=192.168.178.57
 
 [kube-cluster:children]
 master
