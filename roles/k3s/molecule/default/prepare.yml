@@ -1,0 +1,8 @@
+---
+- name: prepare
+  hosts: all
+  tasks:
+  - name: create cmdline.txt
+    copy:
+      dest: /boot/cmdline.txt
+      content: dwc_otg.lpm_enable=0 console=serial0,115200 console=tty1 root=PARTUUID=6af5c44e-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait

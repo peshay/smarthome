@@ -9,5 +9,5 @@ install:
   - pip install molecule
   - pip install docker
 script:
-  - base=$PWD
-  - for role in roles/k3s; do cd $role; molecule test; cd $base; done
+  - cd roles/k3s
+  - molecule test

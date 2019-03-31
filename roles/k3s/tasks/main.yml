@@ -1,2 +1,17 @@
 ---
 # tasks file for k3s
+- name: test for cmdline.txt values
+  command: "grep 'cgroup_memory=1 cgroup_enable=memory' /boot/cmdline.txt"
+  register: cmdline
+  check_mode: false
+  changed_when: false
+  failed_when: false
+
+- name: adapt cmdline.txt
+  lineinfile:
+    path: /boot/cmdline.txt
+    regexp: '(.*)$'
+    line: '\1 cgroup_memory=1 cgroup_enable=memory'
+    state: present
+    backrefs: true
+  when: cmdline.rc != 0
