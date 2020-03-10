@@ -49,3 +49,8 @@ ansible-playbook -i inventory/inventory playbooks/site.yml -t renew_cert
 ```bash
 ansible-playbook -i inventory/inventory playbooks/site.yml -t remount
 ```
+
+
+
+# Reinvent project
+https://aporcupine.com/2020/03/pi4-kubernetes-cluster/
